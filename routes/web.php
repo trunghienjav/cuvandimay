@@ -15,5 +15,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [WelcomeToController::class, 'form']);
-Route::post('/post', [WelcomeToController::class, 'post']);
 
