@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Student extends Model
 {
     use HasFactory;
-    public $timestamps = false;
+    public $timestamps = false;//để khi chạy nó ko báo lỗi updated column unknown
 }
