@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Course\DestroyRequest;
+use App\Http\Requests\Course\StoreRequest;
+use App\Http\Requests\Course\UpdateRequest;
 use App\Models\Course;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
@@ -10,12 +13,16 @@ use Illuminate\Http\Request;
 class CourseController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $data = Course::get();
+        $search = $request->get('q');
+        $data = Course::where('name', 'like', '%'.$search.'%')
+        ->paginate(5);
+        $data->appends(['q' => $search]);//them vao de search theo pagination
 
         return view('course.index', [
             'data' => $data,
+            'search' => $search,
         ]);
     }
 
@@ -30,12 +37,14 @@ class CourseController extends Controller
      * @param  \App\Http\Requests\StoreCourseRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
         $object = new Course();
         // $object->name = $request->get('name');
-        $object->fill($request->except('_token')); //thay thế cho cách trên, nhưng cái name được đẩy lên từ form phải trùng vs trong table, token csrf đc đẩy lên cùng nên phải loại nó ra, buổi 9, 53:00
+        $object->fill($request->validated()); //thay thế cho cách trên, nhưng cái name được đẩy lên từ form phải trùng vs trong table, buổi 9, 53:00
         $object->save();
+
+        // Course::create($request->validated()); //dùng validated này thì ko cần except token nữa. Cái vali này là dựa theo khai báo bên StoreReq
 
         return redirect()->route('course.index');
     }
@@ -52,7 +61,7 @@ class CourseController extends Controller
         ]);
     }
 
-    public function update(Request $request, Course $course)
+    public function update(UpdateRequest $request, Course $course)
     {
         // $course->update(
         //     $request->except([
@@ -74,9 +83,10 @@ class CourseController extends Controller
      * @param  \App\Models\Course  $course
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Course $course)
+    public function destroy(DestroyRequest $request, $course)
     {
-        $course->delete();
+        // $course->delete();
+        Course::destroy($course);
 
         return redirect()->route('course.index');
     }

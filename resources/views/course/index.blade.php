@@ -1,7 +1,12 @@
 <a href="{{ route('course.create') }}">
-Thêm
+    Thêm
 </a>
 <table border="1" width="100%">
+    <caption>
+        <form action="" method="get">
+            Search: <input type="search" name="q" value="{{ $search }}">
+        </form>
+    </caption>
     <tr>
         <th>#</th>
         <th>Name</th>
@@ -9,11 +14,11 @@ Thêm
         <th>Edit</th>
         <th>Delete</th>
     </tr>
-    @foreach ( $data as $each)
+    @foreach ($data as $each)
         <tr>
-            <td>{{ $each -> id }}</td>
-            <td>{{ $each -> name }}</td>
-            <td>{{ $each -> year_created_at }}</td>
+            <td>{{ $each->id }}</td>
+            <td>{{ $each->name }}</td>
+            <td>{{ $each->year_created_at }}</td>
             {{-- <td>{{ $each -> created_at->format('Y-m-d') }}</td> --}}
             <td>
                 <a href="{{ route('course.edit', $each) }}">
@@ -31,3 +36,4 @@ Thêm
         </tr>
     @endforeach
 </table>
+{{ $data->links() }}
