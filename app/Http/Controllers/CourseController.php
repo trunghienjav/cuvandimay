@@ -6,19 +6,30 @@ use App\Http\Requests\Course\DestroyRequest;
 use App\Http\Requests\Course\StoreRequest;
 use App\Http\Requests\Course\UpdateRequest;
 use App\Models\Course;
-use App\Http\Requests\StoreCourseRequest;
-use App\Http\Requests\UpdateCourseRequest;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 
 class CourseController extends Controller
 {
+    private Model $model; //khai báo cái này để khi copy sang chỗ khác thì chỉ cần sửa chỗ này
+    public function __construct()
+    {
+        $this->model = new Course();
+        $routeName = Route::currentRouteName();
+        $arr = explode('.', $routeName);
+        $arr = array_map('ucfirst', $arr);
+        $title = implode(' - ', $arr);
+        View::share('title', $title);
+    }
 
     public function index(Request $request)
     {
         $search = $request->get('q');
-        $data = Course::where('name', 'like', '%'.$search.'%')
-        ->paginate(5);
-        $data->appends(['q' => $search]);//them vao de search theo pagination
+        $data = $this->model::where('name', 'like', '%' . $search . '%')
+            ->paginate(5);
+        $data->appends(['q' => $search]); //them vao de search theo pagination
 
         return view('course.index', [
             'data' => $data,
@@ -31,12 +42,6 @@ class CourseController extends Controller
         return view('course.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreCourseRequest  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(StoreRequest $request)
     {
         $object = new Course();
@@ -44,9 +49,9 @@ class CourseController extends Controller
         $object->fill($request->validated()); //thay thế cho cách trên, nhưng cái name được đẩy lên từ form phải trùng vs trong table, buổi 9, 53:00
         $object->save();
 
-        // Course::create($request->validated()); //dùng validated này thì ko cần except token nữa. Cái vali này là dựa theo khai báo bên StoreReq
+        // $this->model::create($request->validated()); //dùng validated này thì ko cần except token nữa. Cái vali này là dựa theo khai báo bên StoreReq
 
-        return redirect()->route('course.index');
+        return redirect()->route('course.create');
     }
 
     public function show(Course $course)
@@ -61,33 +66,49 @@ class CourseController extends Controller
         ]);
     }
 
-    public function update(UpdateRequest $request, Course $course)
+    public function update(UpdateRequest $request, $courseId)
     {
+        // $this->model::where('id', $courseId)->update(
+        //     $request->validated()
+        // );
+
         // $course->update(
         //     $request->except([
         //         '_token',
         //         '_method',
         //     ])
         // );
-
-        $course->fill($request->except('_token'));
-        $course->save();
+        $object = $this->model->find($courseId);
+        $object->fill($request->validated());
+        $object->save();
         //2 cách, cách trên là dùng query builder tốc độ nhanh hơn, nhưng cách dưới là dùng eloquent theo oop, khai báo đối tượng, có thể bắt đc event
 
         return redirect()->route('course.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Course  $course
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(DestroyRequest $request, $course)
-    {
-        // $course->delete();
-        Course::destroy($course);
+    // public function destroy(DestroyRequest $request, Course $course)
+    // {
+    //     // dd(1);
+    //     // $this->model->find($course)->delete();
+    //     // $this->model->where('id', $course)->delete();
+    //     // $course->delete();
+    //     // $this->model::destroy($course);
 
-        return redirect()->route('course.index');
+    //     // return redirect()->route('course.index');
+
+    //     return back();
+
+    // }
+    public function destroy(DestroyRequest $request, $courseId)
+    {
+        $this->model->find($courseId)->delete();
+        // $this->model->where('id', $courseId)->delete();
+
+        // $arr            = [];
+        // $arr['status']  = true;
+        // $arr['message'] = '';
+        //đoạn arr này là sao vẫn chưa hiểu
+
+        return back();
     }
 }
