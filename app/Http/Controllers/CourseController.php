@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\StudentStatusEnum;
 use App\Http\Requests\Course\DestroyRequest;
 use App\Http\Requests\Course\StoreRequest;
 use App\Http\Requests\Course\UpdateRequest;
@@ -21,6 +22,7 @@ class CourseController extends Controller
         $arr = explode('.', $routeName);
         $arr = array_map('ucfirst', $arr);
         $title = implode(' - ', $arr);
+
         View::share('title', $title);
     }
 
@@ -35,6 +37,15 @@ class CourseController extends Controller
             'data' => $data,
             'search' => $search,
         ]);
+    }
+
+    public function apiName(Request $request)
+    {
+        return $this->model->where('name', 'like', '%'.$request->get('q'). '%')
+            ->get([
+                'id',
+                'name',
+            ]);
     }
 
     public function create()

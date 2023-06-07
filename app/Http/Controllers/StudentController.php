@@ -2,31 +2,80 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\StudentStatusEnum;
+use App\Http\Requests\Course\DestroyRequest;
+use App\Http\Requests\Course\UpdateRequest;
+use App\Http\Requests\Student\StoreRequest;
+use App\Models\Course;
 use App\Models\Student;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 
 class StudentController extends Controller
 {
-    public function index()
+    private Model $model; //khai báo cái này để khi copy sang chỗ khác thì chỉ cần sửa chỗ này
+    public function __construct()
     {
-        $students = Student::get();
+        $this->model = new Student();
+        $routeName = Route::currentRouteName();
+        $arr = explode('.', $routeName);
+        $arr = array_map('ucfirst', $arr);//viết hoa chữ cái đầu
+        $title = implode(' - ', $arr);
 
-        return view('students.index', [
-            'students' => $students,
+        $arrStudentStatus = StudentStatusEnum::getArrayView();//lấy ra enum
+        // dd($arrStudentStatus);
+        View::share('title', $title);
+        View::share('arrStudentStatus', $arrStudentStatus);
+    }
+
+    public function index(Request $request)
+    {
+        $search = $request->get('q');
+        $data = $this->model::where('name', 'like', '%' . $search . '%')
+            ->paginate(5);
+        $data->appends(['q' => $search]); //them vao de search theo pagination
+
+        return view('student.index', [
+            'data' => $data,
+            'search' => $search,
         ]);
     }
 
     public function create()
     {
-        return view('students.create');
+        $courses = Course::get();
+
+        return view('student.create',[
+            'courses' => $courses,
+        ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $student = new Student();
-        $student->name = $request->get('name');
-        $student->birthdate = $request->get('birthdate');
-        $student->gender = $request->get('gender');
-        $student->save();
+        $this->model::create($request->validated());//lưu vào db những giá trị đã dc vavidate
+
+        return redirect()->route('student.index')->with('success', 'Đã thêm thành công');
+    }
+
+    public function show()
+    {
+        //
+    }
+
+    public function edit()
+    {
+
+    }
+
+    public function update()
+    {
+
+    }
+
+    public function destroy()
+    {
+
     }
 }

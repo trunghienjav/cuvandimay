@@ -1,26 +1,22 @@
 @extends('layout.master')
+@push('css')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
 @section('content')
     <div class="card">
-        {{-- nếu có lỗi gì thì nó sẽ in ra cái thể card header này --}}
-        @if ($errors->any())
-            <div class="card-header">
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        @endif
         <div class="card-body">
             <a class="btn btn-success" style="margin-bottom: 1%" href="{{ route('course.create') }}">
                 Thêm
             </a>
-                <form class="float-right form-group form-inline">
-                    <label class="mr-2">Search:</label>
-                    <input type="search" name="q" value="{{ $search }}" class="form-control">
-                </form>
+            <div class="form-group">
+                <select id="select-name">
+                </select>
+            </div>
+            <form class="float-right form-group form-inline">
+                <label class="mr-2">Search:</label>
+                <input type="search" name="q" value="{{ $search }}" class="form-control">
+            </form>
             <br>
             <table class="table table-striped table-centered mb-0">
                 <tr>
@@ -60,3 +56,39 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        // var table = $('#select2345').DataTable();
+        $("#select-name").select2({
+            ajax: {
+                url: "{{ route('course.api.name') }}",
+                dataType: 'json',
+                data: function(params) {
+                    return {
+                        q: params.term, // search term
+                    };
+                },
+                processResults: function(data, params) {
+                    console.log(data);
+
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                text: item.name,
+                                id: item.id
+                            }
+                        })
+                    };
+                }
+            },
+            placeholder: 'Search for a name',
+            // minimumInputLength: 1,
+        });
+
+        $("#select-name").change(function() {
+            table.column(0).search(this.value).draw();
+        });
+    </script>
+@endpush

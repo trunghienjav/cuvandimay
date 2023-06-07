@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -11,9 +12,12 @@ Route::delete('/courses/destroy/{course}', [CourseController::class, 'destroy'])
 Route::get('/courses/edit/{course}', [CourseController::class, 'edit'])->name('course.edit');
 Route::put('/courses/edit/{course}', [CourseController::class, 'update'])->name('course.update');
 
-Route::get(
-    'test',
-    function () {
-        return view('layout.master');
-    }
-);
+Route::get('courses/api/name', [CourseController::class, 'apiName'])->name('course.api.name');
+
+Route::get('/students',[StudentController::class, 'index'])->name('student.index');
+Route::get('/students/create',[StudentController::class, 'create'])->name('student.create');
+Route::post('/students/create',[StudentController::class, 'store'])->name('student.store');
+Route::delete('/students/destroy/{student}', [StudentController::class, 'destroy'])->name('student.destroy');
+
+
+
