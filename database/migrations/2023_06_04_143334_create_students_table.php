@@ -13,16 +13,18 @@ class CreateStudentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('students', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 50);
-            $table->boolean('gender')->default(0);
-            $table->date('birthdate');
-            $table->smallInteger('status')->comment('StudentStatusEnum')->index();
-            $table->foreignId('course_id')->constrained();
-            $table->timestamps();
 
-        });
+        if (!Schema::hasTable('students')) {
+            Schema::create('students', function (Blueprint $table) {
+                $table->id();
+                $table->string('name', 50);
+                $table->boolean('gender')->default(0);
+                $table->date('birthdate');
+                $table->smallInteger('status')->comment('StudentStatusEnum')->index();
+                $table->foreignId('course_id')->constrained();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

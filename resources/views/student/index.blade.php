@@ -15,6 +15,7 @@
             <th>Gender</th>
             <th>Birthdate</th>
             <th>Status</th>
+            <th>Avatar</th>
             <th>Course Name</th>
             <th>Edit</th>
             <th>Delete</th>
@@ -34,16 +35,15 @@
                     //cách này tự làm, tensai daro-, nhưng anh Long bảo ko nên xử lí ở front nên để tham khảo z --}}
                     {{ $each->statusname }}
                 </td>
-                <td>{{ optional($each->course)->name }}</td>
-                {{-- <td>{{ $each->year_created_at }}</td> --}}
-                {{-- <td>{{ $each -> created_at->format('Y-m-d') }}</td> --}}
                 <td>
-                    {{-- <a class="btn btn-primary" href="{{ route('student.edit', $each) }}">
+                </td>
+                <td>{{ optional($each->course)->name }}</td>
+                <td>
+                    <a class="btn btn-primary" href="{{ route('student.edit', $each) }}">
                         Edit
-                    </a> --}}
+                    </a>
                 </td>
                 <td>
-
                 </td>
             </tr>
         @endforeach

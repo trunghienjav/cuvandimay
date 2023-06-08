@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Enums\StudentStatusEnum;
-use App\Http\Requests\Course\DestroyRequest;
-use App\Http\Requests\Course\UpdateRequest;
 use App\Http\Requests\Student\StoreRequest;
 use App\Models\Course;
 use App\Models\Student;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 
 class StudentController extends Controller
@@ -21,10 +20,10 @@ class StudentController extends Controller
         $this->model = new Student();
         $routeName = Route::currentRouteName();
         $arr = explode('.', $routeName);
-        $arr = array_map('ucfirst', $arr);//viết hoa chữ cái đầu
+        $arr = array_map('ucfirst', $arr); //viết hoa chữ cái đầu
         $title = implode(' - ', $arr);
 
-        $arrStudentStatus = StudentStatusEnum::getArrayView();//lấy ra enum
+        $arrStudentStatus = StudentStatusEnum::getArrayView(); //lấy ra enum
         // dd($arrStudentStatus);
         View::share('title', $title);
         View::share('arrStudentStatus', $arrStudentStatus);
@@ -47,14 +46,18 @@ class StudentController extends Controller
     {
         $courses = Course::get();
 
-        return view('student.create',[
+        return view('student.create', [
             'courses' => $courses,
         ]);
     }
 
     public function store(StoreRequest $request)
     {
-        $this->model::create($request->validated());//lưu vào db những giá trị đã dc vavidate
+        $path          = Storage::disk('public')->putFile('avatars', $request->file('avatar'));
+        $arr           = $request->validated();
+        $arr['avatar'] = $path;
+        // dd($arr);
+        $this->model->create($arr);
 
         return redirect()->route('student.index')->with('success', 'Đã thêm thành công');
     }
@@ -66,16 +69,13 @@ class StudentController extends Controller
 
     public function edit()
     {
-
     }
 
     public function update()
     {
-
     }
 
     public function destroy()
     {
-
     }
 }

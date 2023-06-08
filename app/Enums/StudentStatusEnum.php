@@ -21,4 +21,10 @@ final class StudentStatusEnum extends Enum
         //thì nó là biến cục bộ của 1 class, muốn dùng phải dùng câu lệnh tênclass.tên_hàm, còn this
         //là tham chiếu biến instance cụ thể, nên ko dùng được (hiểu theo chát gpt)
     }
+
+    public static function getKeyByValue($value) : string
+    {
+        return array_search($value, self::getArrayView(), true); //buổi 15, key: search by value, anh Long chỉ rễ hiểu vkl
+        //hàm này để lấy ra cái enum để in ra bên control
+    }
 }

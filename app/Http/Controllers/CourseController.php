@@ -30,6 +30,7 @@ class CourseController extends Controller
     {
         $search = $request->get('q');
         $data = $this->model::where('name', 'like', '%' . $search . '%')
+            ->withCount('students') //lấy số sv có trong 1 lớp
             ->paginate(5);
         $data->appends(['q' => $search]); //them vao de search theo pagination
 

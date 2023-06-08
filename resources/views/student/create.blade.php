@@ -1,7 +1,7 @@
 @extends('layout.master')
 @section('content')
     <div class="form-group form-outline w-75">
-        <form action="{{ route('student.store') }}" method="post">
+        <form action="{{ route('student.store') }}" method="post" enctype="multipart/form-data">
             @csrf
             <label for="name">Name</label>
             <input class="form-control" type="text" name="name" id="name" value="{{ old('name') }}">
@@ -9,14 +9,14 @@
             {{-- old() là làm xuất hiện lại dữ liệu cũ --}}
             <label>Gender</label>
             <br>
-            <input type="radio" name="gender" value="0" checked>Nam
-            <input type="radio" name="gender" value="1">Nữ
+            <input type="radio" name="gender" value="0" checked>Nữ&emsp;
+            <input type="radio" name="gender" value="1">Nam
             <br>
             <label>Birthdate</label>
             <input type="date" name="birthdate">
             <br>
             <label>Status</label>
-            <div class="mt-3">
+            <div class="mt-6" >
                 @foreach ($arrStudentStatus as $option => $value)
                     <div class="custom-control custom-radio">
                         <input type="radio" id="{{ $value }}" name="status" class="custom-control-input"
@@ -25,6 +25,10 @@
                     </div>
                 @endforeach
             </div>
+            <br>
+            <label>Avatar</label>
+            <input type="file" name="avatar">
+            <br>
             <br>
             <label>Course</label>
             <select name="course_id">

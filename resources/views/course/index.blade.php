@@ -23,6 +23,7 @@
                     <th>#</th>
                     <th>Name</th>
                     <th>Created At</th>
+                    <th>Number students</th>
                     <th>Edit</th>
                     <th>Delete</th>
                 </tr>
@@ -31,7 +32,8 @@
                         <td>{{ $each->id }}</td>
                         <td>{{ $each->name }}</td>
                         <td>{{ $each->year_created_at }}</td>
-                        {{-- <td>{{ $each -> created_at->format('Y-m-d') }}</td> --}}
+                        <td>{{ $each->students_count }}</td>
+                        {{-- đếm số hs có trong lớp, buôi 15, 1:04:50 --}}
                         <td>
                             <a class="btn btn-primary" href="{{ route('course.edit', $each) }}">
                                 Edit
