@@ -7,6 +7,7 @@ use App\Http\Requests\Course\DestroyRequest;
 use App\Http\Requests\Course\StoreRequest;
 use App\Http\Requests\Course\UpdateRequest;
 use App\Models\Course;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -42,7 +43,7 @@ class CourseController extends Controller
 
     public function apiName(Request $request)
     {
-        return $this->model->where('name', 'like', '%'.$request->get('q'). '%')
+        return $this->model->where('name', 'like', '%' . $request->get('q') . '%')
             ->get([
                 'id',
                 'name',
@@ -113,14 +114,19 @@ class CourseController extends Controller
     // }
     public function destroy(DestroyRequest $request, $courseId)
     {
-        $this->model->find($courseId)->delete();
-        // $this->model->where('id', $courseId)->delete();
+        try {
+            $this->model->find($courseId)->delete();
+            // $this->model->where('id', $courseId)->delete();
 
-        // $arr            = [];
-        // $arr['status']  = true;
-        // $arr['message'] = '';
-        //đoạn arr này là sao vẫn chưa hiểu
+            // $arr            = [];
+            // $arr['status']  = true;
+            // $arr['message'] = '';
+            //đoạn arr này là sao vẫn chưa hiểu
 
-        return back();
+            return back();
+        } catch (\Throwable $error) {
+            // return redirect()->back()->with('fail', 'Không thể xoá vì vẫn còn học sinh đang học trong lớp');
+            return redirect()->back()->withErrors(['msg' => 'Đkm thích xoá không, không thể xoá vì vẫn còn học sinh đang học trong lớp']);
+        }
     }
 }

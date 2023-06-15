@@ -25,7 +25,9 @@
                     <th>Created At</th>
                     <th>Number students</th>
                     <th>Edit</th>
-                    <th>Delete</th>
+                    @if (checkSuperAdmin())
+                        <th>Delete</th>
+                    @endif
                 </tr>
                 @foreach ($data as $each)
                     <tr>
@@ -39,14 +41,16 @@
                                 Edit
                             </a>
                         </td>
-                        <td>
-                            <form action="{{ route('course.destroy', $each) }}" method="post">
-                                @csrf
-                                @method('DELETE')
-                                {{-- xoá thì cần thềm method delete --}}
-                                <button class="btn btn-danger">Delete</button>
-                            </form>
-                        </td>
+                        @if (checkSuperAdmin())
+                            <td>
+                                <form action="{{ route('course.destroy', $each) }}" method="post">
+                                    @csrf
+                                    @method('DELETE')
+                                    {{-- xoá thì cần thềm method delete --}}
+                                    <button class="btn btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        @endif
                     </tr>
                 @endforeach
             </table>

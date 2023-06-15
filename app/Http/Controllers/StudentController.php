@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Enums\StudentStatusEnum;
+use App\Http\Requests\Student\DestroyRequest;
 use App\Http\Requests\Student\StoreRequest;
+use App\Http\Requests\Student\UpdateRequest;
 use App\Models\Course;
 use App\Models\Student;
 use Illuminate\Database\Eloquent\Model;
@@ -55,7 +57,7 @@ class StudentController extends Controller
     {
         $path          = Storage::disk('public')->putFile('avatars', $request->file('avatar'));
         $arr           = $request->validated();
-        $arr['avatar'] = $path;
+        $arr['avatar'] = $path; //ghi đề lên cái đường dẫn của avatar, nếu ko nó trả về dạng ko phải tên ảnh
         // dd($arr);
         $this->model->create($arr);
 
@@ -67,15 +69,33 @@ class StudentController extends Controller
         //
     }
 
-    public function edit()
+    public function edit(Student $student)
     {
+        $courses = Course::get();
+        return view('student.edit', [
+            'each' => $student,
+            'courses' => $courses,
+        ]);
     }
 
-    public function update()
+    public function update(UpdateRequest $request, $student)
     {
+        // dd($student);
+        $object = $this->model->find($student);
+        $object->fill($request->validated());
+        $object->save();
+
+        // $this->model::where('id', $student)->update(
+        //     $request->validated()
+        // );
+        return redirect()->route('student.index');
     }
 
-    public function destroy()
+    public function destroy(DestroyRequest $request, $student)
     {
+        // dd($student);
+        $this->model->find($student)->delete();
+
+        return back();
     }
 }

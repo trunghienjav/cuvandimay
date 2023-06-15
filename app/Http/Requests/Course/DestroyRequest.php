@@ -23,7 +23,7 @@ class DestroyRequest extends FormRequest
             'course' => [
                 // thèn course trong rule này lấy fill từ trong form nên khi để nó là thanh địa chỉ thì nó ko lấy đc
                 'required',
-                Rule::exists(Course::class, 'id') //vẫn chưa hiểu lắm, buổi 10, 1:34:00->
+                Rule::exists(Course::class, 'id') //yêu cầu tồn tại id, buổi 10, 1:34:00->
                 //hình như là khi muốn xoá thì nó bắt buộc là phải xoá theo id tồn tại thực (validate)
             ],
         ];

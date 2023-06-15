@@ -36,6 +36,7 @@
                     {{ $each->statusname }}
                 </td>
                 <td>
+                    <img src="{{ public_path() }}/{{$each->avatar}} ">
                 </td>
                 <td>{{ optional($each->course)->name }}</td>
                 <td>
@@ -44,6 +45,12 @@
                     </a>
                 </td>
                 <td>
+                    <form action="{{ route('student.destroy', $each) }}" method="post">
+                        @csrf
+                        @method('DELETE')
+                        {{-- xoá thì cần thềm method delete --}}
+                        <button class="btn btn-danger">Delete</button>
+                    </form>
                 </td>
             </tr>
         @endforeach
